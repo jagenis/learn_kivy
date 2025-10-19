@@ -1,0 +1,33 @@
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition,SwapTransition
+from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
+
+class PantallaInicio(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation="vertical")
+        layout.add_widget(Button(text="Ir a Pantalla 2", on_press=self.ir_a_segunda))
+        self.add_widget(layout)
+
+    def ir_a_segunda(self, instance):
+        self.manager.current = "segunda"
+
+class PantallaDos(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation="vertical")
+        layout.add_widget(Button(text="Volver a inicio", on_press=self.volver))
+        self.add_widget(layout)
+
+    def volver(self, instance):
+        self.manager.current = "inicio"
+
+class DemoScreenManager(App):
+    def build(self):
+        sm = ScreenManager(transition=SwapTransition())
+        sm.add_widget(PantallaInicio(name="inicio"))
+        sm.add_widget(PantallaDos(name="segunda"))
+        return sm
+
+DemoScreenManager().run()

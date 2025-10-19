@@ -1,0 +1,42 @@
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.properties import StringProperty
+
+class PanelIzquierdo(BoxLayout):
+    selected_item = StringProperty("Ninguno")
+
+    def __init__(self, **kwargs):
+        super().__init__(orientation="vertical", **kwargs)
+        for i in range(3):
+            btn = Button(text=f"Elemento {i+1}")
+            btn.bind(on_press=lambda x, i=i: self.seleccionar(i))
+            self.add_widget(btn)
+
+    def seleccionar(self, index):
+        self.selected_item = f"Elemento {index+1}"
+
+class PanelDerecho(BoxLayout):
+    display_text = StringProperty("Selecciona un elemento")
+
+    def __init__(self, left_panel, **kwargs):
+        super().__init__(orientation="vertical", **kwargs)
+        self.label = Label(text=self.display_text)
+        self.add_widget(self.label)
+        # Vincular propiedad del panel izquierdo
+        left_panel.bind(selected_item=self.actualizar)
+    
+    def actualizar(self, instance, value):
+        self.label.text = f"Propiedades de: {value}"
+
+class DualPanelApp(App):
+    def build(self):
+        root = BoxLayout(orientation="horizontal")
+        panel_izq = PanelIzquierdo()
+        panel_der = PanelDerecho(panel_izq)
+        root.add_widget(panel_izq)
+        root.add_widget(panel_der)
+        return root
+
+DualPanelApp().run()
