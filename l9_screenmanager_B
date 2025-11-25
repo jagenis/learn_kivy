@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
+from kivy.uix.slider import Slider
 
 class PanelIzquierdo(BoxLayout):
     selected_item = StringProperty("Ninguno")
@@ -22,6 +23,12 @@ class PanelDerecho(BoxLayout):
 
     def __init__(self, left_panel, **kwargs):
         super().__init__(orientation="vertical", **kwargs)
+        self.paro_marcha = ParoMarcha(size_hint_y=None, height=80)
+        self.add_widget(self.paro_marcha)
+        self.padding = 10
+        self.spacing = 10
+        self.velocidad = Slider(min=0, max=100, value=50, size_hint_y=None, height=40)
+        self.add_widget(self.velocidad)
         self.label = Label(text=self.display_text)
         self.add_widget(self.label)
         # Vincular propiedad del panel izquierdo
@@ -30,8 +37,21 @@ class PanelDerecho(BoxLayout):
     def actualizar(self, instance, value):
         self.label.text = f"Propiedades de: {value}"
 
+class ParoMarcha(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(orientation="horizontal", **kwargs)
+        self.add_widget(Button(text="Paro", on_press=self.parar))
+        self.add_widget(Button(text="Marcha", on_press=self.marchar))
+        self.height = 20
+    def parar(self, instance):
+        self.parent.parent.selected_item = "Paro"
+    
+    def marchar(self, instance):
+        self.parent.parent.selected_item = "Marcha"        
+
 class DualPanelApp(App):
     def build(self):
+        self.icon = 'custom_icon.png'
         root = BoxLayout(orientation="horizontal")
         panel_izq = PanelIzquierdo()
         panel_der = PanelDerecho(panel_izq)
